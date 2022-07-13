@@ -1,5 +1,7 @@
 package com.example.cryptocurrency.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -7,12 +9,16 @@ import javax.persistence.Id;
 public class Coin {
 
     @Id
+    @JsonProperty("id")
     private int id;
+    @JsonProperty("symbol")
     private String symbol;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("price_usd")
     private double price;
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 

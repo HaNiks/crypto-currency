@@ -5,16 +5,17 @@ import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.util.CoinNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @EnableScheduling
 public class CoinService {
     private final CoinRepo coinRepo;
+
 
     @Autowired
     public CoinService(CoinRepo coinRepo) {
@@ -27,15 +28,5 @@ public class CoinService {
 
     public Coin findById(int id) {
         return coinRepo.findById(id).orElseThrow(CoinNotFoundException::new);
-    }
-
-    @PostConstruct
-    public void save() {
-
-    }
-
-    @Scheduled(fixedRate = 60000)
-    public void update() {
-
     }
 }

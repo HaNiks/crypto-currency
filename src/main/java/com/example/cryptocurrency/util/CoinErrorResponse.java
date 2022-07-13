@@ -1,13 +1,15 @@
 package com.example.cryptocurrency.util;
 
+import java.time.LocalDateTime;
+
 public class CoinErrorResponse {
 
     private String message;
-    private long timestamp;
+    private LocalDateTime time;
 
-    public CoinErrorResponse(String message, long timestamp) {
+    public CoinErrorResponse(String message, LocalDateTime time) {
         this.message = message;
-        this.timestamp = timestamp;
+        this.time = time;
     }
 
     public String getMessage() {
@@ -18,11 +20,11 @@ public class CoinErrorResponse {
         this.message = message;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public LocalDateTime getTime() {
+        return time;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 }
