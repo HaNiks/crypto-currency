@@ -18,11 +18,12 @@ public class NotificationService {
     private final RestTemplate restTemplate;
     private final CoinService coinService;
     private final CoinRepo coinRepo;
-    Logger log = LoggerFactory.getLogger(CoinRepo.class);
+    private final Logger log;
 
     public NotificationService(CoinService coinService, CoinRepo coinRepo) {
         this.coinService = coinService;
         this.coinRepo = coinRepo;
+        this.log = LoggerFactory.getLogger(CoinRepo.class);
         this.restTemplate = new RestTemplate();
     }
 
@@ -32,7 +33,7 @@ public class NotificationService {
         List<Coin> coins = coinService.findAll();
         for (Coin coin : coins) {
             System.out.println(coin.getName());
-            this.updatePrice(coin.getId(), this.getNewPrice(coin.getId()));
+            this.updatePrice(coin.getId(), this.getNewPrice(coin.getSymbol()));
         }
     }
 
@@ -49,7 +50,7 @@ public class NotificationService {
         double newPrice = 0;
         for (Coin coin : coinRepo.findAll()) {
             if (coinService.findById(coin.getId()).getSymbol().equals(symbol)) {
-                newPrice = getNewPrice(coin.getId());
+                newPrice = getNewPrice(coin.getSymbol());
                 oldPrice = coin.getPrice();
                 output.append(oldPrice);
                 break;
@@ -60,10 +61,16 @@ public class NotificationService {
             log.warn(String.valueOf(output) + result);
     }
 
-    private double getNewPrice(int id) {
-        String url = "https://api.coinlore.net/api/ticker/?id=" + id;
-        double price = Objects.requireNonNull(restTemplate.getForObject(url, Coin.class)).getPrice();
-        System.out.println(price);
-        return price;
+    private double getNewPrice(String symbol) {
+        String url = "https://api.coinlore.net/api/ticker/?id=" + getCoinBySymbol(symbol).getId();
+        Coin[] coins = restTemplate.getForObject(url, Coin[].class);
+        System.out.println(coins[0].getPrice());
+        return coins[0].getPrice();
+    }
+
+    private Coin getCoinBySymbol(String symbol) {
+        return coinRepo.findAll().stream()
+                .filter(c -> c.getSymbol().equals(symbol))
+                .findFirst().get();
     }
 }
