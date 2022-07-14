@@ -8,6 +8,7 @@ import com.example.cryptocurrency.util.CoinNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -38,7 +39,7 @@ public class CoinController {
 
     @GetMapping("/notify")
     public void notify(@ModelAttribute("username") String username, @ModelAttribute("symbol") String symbol) {
-        notificationService.notifyUser(username, symbol);
+        notificationService.setUsername(username, symbol);
     }
 
     @ExceptionHandler

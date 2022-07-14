@@ -1,6 +1,8 @@
 package com.example.cryptocurrency.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
