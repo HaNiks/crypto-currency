@@ -31,7 +31,7 @@ public class NotificationService {
         notification = new Notification();
     }
 
-    @Scheduled(fixedRate = 60 * 1000)
+    @Scheduled(fixedRate = 10 * 1000)
     @Async
     public void update() {
         List<Coin> coins = coinService.findAll();
@@ -44,30 +44,28 @@ public class NotificationService {
     public void updatePrice(int id, double price) {
         Coin coin = coinService.findById(id);
         coin.setPrice(price);
-        System.out.println(coin.getName());
-        System.out.println(coin.getPrice());
         coinRepo.save(coin);
     }
 
     public void setUsername(String username, String symbol) {
-        Coin coin = getCoinBySymbol(symbol);
-        notification.setOldPrice(coin.getPrice());
+        notification.setOldPrice(getCoinBySymbol(symbol).getPrice());
+        notification.setId(getCoinBySymbol(symbol).getId());
         notification.setUsername(username);
+        notification.setSymbol(symbol);
         notifyUser(symbol);
     }
 
     public void notifyUser(String symbol) {
-        for (Coin coin : coinRepo.findAll()) {
+        for (Coin coin : coinService.findAll()) {
             if (coinService.findById(coin.getId()).getSymbol().equals(symbol)) {
                 notification.setNewPrice(coin.getPrice());
-                System.out.println(notification.getOldPrice());
-                System.out.println(notification.getNewPrice());
-                break;
+                if (notification.getUsername() != null && coin.getSymbol().equals(notification.getSymbol())) {
+                    checkLog();
+                    break;
+                }
             }
         }
-        if (notification.getUsername() != null) {
-            writeLog(symbol);
-        }
+
     }
 
     private double getNewPrice(String symbol) {
@@ -82,14 +80,13 @@ public class NotificationService {
                 .findFirst().get();
     }
 
-    private void writeLog(String symbol) {
+    private void checkLog() {
         double percent = (notification.getNewPrice() - notification.getOldPrice()) * 100 / notification.getOldPrice();
-        for (Coin coin : coinService.findAll()) {
-            if (Math.abs(percent) >= 0.1 && coin.getSymbol().equals(symbol)) {
-                notification.setLog(new StringBuilder("Name: " + notification.getUsername() + ", symbol: " + symbol + ", old price: " +
-                        notification.getOldPrice() + ", new price: " + notification.getNewPrice() + ", percent: " + percent));
-                log.warn(String.valueOf(notification.getLog()));
-            }
+        if (Math.abs(percent) >= 1) {
+            notification.setLog(new StringBuilder(LocalDateTime.now() + "ID: " + notification.getId() + " Name: " +
+                    notification.getUsername() + ", symbol: " + notification.getSymbol() + ", old price: " +
+                    notification.getOldPrice() + ", new price: " + notification.getNewPrice() + ", percent: " + percent));
+            log.warn(String.valueOf(notification.getLog()));
         }
     }
 }

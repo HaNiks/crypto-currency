@@ -1,11 +1,10 @@
 package com.example.cryptocurrency.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class Coin {
@@ -50,6 +49,19 @@ public class Coin {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Coin)) return false;
+        Coin coin = (Coin) o;
+        return getId() == coin.getId() && Double.compare(coin.getPrice(), getPrice()) == 0 && getSymbol().equals(coin.getSymbol()) && getName().equals(coin.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getSymbol(), getName(), getPrice());
     }
 }
 

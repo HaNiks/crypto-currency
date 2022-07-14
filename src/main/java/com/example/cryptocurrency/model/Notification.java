@@ -2,12 +2,21 @@ package com.example.cryptocurrency.model;
 
 public class Notification {
 
+    private int id;
     private String username;
     private double oldPrice;
     private double newPrice;
 
     private String symbol;
     private StringBuilder log;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
