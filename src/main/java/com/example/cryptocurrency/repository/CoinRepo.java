@@ -1,4 +1,4 @@
-package com.example.cryptocurrency.dao;
+package com.example.cryptocurrency.repository;
 
 import com.example.cryptocurrency.model.Coin;
 import org.springframework.data.jpa.repository.JpaRepository;

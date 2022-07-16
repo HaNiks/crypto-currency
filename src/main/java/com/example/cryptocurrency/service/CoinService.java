@@ -1,8 +1,7 @@
 package com.example.cryptocurrency.service;
 
-import com.example.cryptocurrency.dao.CoinRepo;
+import com.example.cryptocurrency.repository.CoinRepo;
 import com.example.cryptocurrency.model.Coin;
-import com.example.cryptocurrency.util.CoinNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,4 @@ public class CoinService {
         return coinRepo.findAll();
     }
 
-    public Coin findById(int id) {
-        return coinRepo.findById(id).orElseThrow(CoinNotFoundException::new);
-    }
 }

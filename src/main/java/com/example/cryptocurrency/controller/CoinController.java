@@ -1,10 +1,12 @@
 package com.example.cryptocurrency.controller;
 
 import com.example.cryptocurrency.model.Coin;
+import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.service.CoinService;
-import com.example.cryptocurrency.service.NotificationService;
-import com.example.cryptocurrency.util.CoinErrorResponse;
-import com.example.cryptocurrency.util.CoinNotFoundException;
+import com.example.cryptocurrency.service.PriceService;
+import com.example.cryptocurrency.service.UserService;
+import com.example.cryptocurrency.util.UserErrorResponse;
+import com.example.cryptocurrency.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +20,14 @@ import java.util.List;
 public class CoinController {
 
     private final CoinService coinService;
-    private final NotificationService notificationService;
+    private final PriceService priceService;
+    private final UserService userService;
 
     @Autowired
-    public CoinController(CoinService coinService, NotificationService notificationService) {
+    public CoinController(CoinService coinService, PriceService priceService, UserService userService) {
         this.coinService = coinService;
-        this.notificationService = notificationService;
+        this.priceService = priceService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -31,19 +35,19 @@ public class CoinController {
         return coinService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public Coin getCoinById(@PathVariable("id") int id) {
-        return coinService.findById(id);
+    @GetMapping("/{symbol}")
+    public Price getPriceBySymbol(@PathVariable("symbol") String symbol) {
+        return priceService.updatePrice(symbol);
     }
 
     @GetMapping("/notify")
     public void notify(@ModelAttribute("username") String username, @ModelAttribute("symbol") String symbol) {
-        notificationService.setUsername(username, symbol);
+        userService.setUserName(username, symbol);
     }
 
     @ExceptionHandler
-    private ResponseEntity<CoinErrorResponse> handlerException(CoinNotFoundException exception) {
-        CoinErrorResponse response = new CoinErrorResponse("Coin with this id wasn't found",
+    private ResponseEntity<UserErrorResponse> handlerException(UserNotFoundException exception) {
+        UserErrorResponse response = new UserErrorResponse("User not found",
                 LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
