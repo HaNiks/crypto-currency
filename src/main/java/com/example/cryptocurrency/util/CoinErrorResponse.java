@@ -2,12 +2,12 @@ package com.example.cryptocurrency.util;
 
 import java.time.LocalDateTime;
 
-public class UserErrorResponse {
+public class CoinErrorResponse {
 
     private String message;
     private LocalDateTime time;
 
-    public UserErrorResponse(String message, LocalDateTime time) {
+    public CoinErrorResponse(String message, LocalDateTime time) {
         this.message = message;
         this.time = time;
     }

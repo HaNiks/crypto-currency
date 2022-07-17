@@ -31,7 +31,7 @@ public class UserService {
         users = new ArrayList<>();
     }
 
-    @Scheduled(fixedRate = 10 * 1000)
+    @Scheduled(fixedRate = 60 * 1000)
     @Async
     public void update() {
         List<Price> prices = priceRepo.findAll();
@@ -40,7 +40,6 @@ public class UserService {
             if (user != null) {
                 notifyUser(price.getSymbol());
             }
-            System.out.println(price);
         }
     }
 
@@ -51,7 +50,6 @@ public class UserService {
         user.setUserName(userName);
         user.setSymbol(symbol);
         users.add(user);
-        System.out.println(users);
     }
 
     public void notifyUser(String symbol) {
@@ -65,7 +63,7 @@ public class UserService {
         double percent;
         for (User user : users) {
             percent = (this.getNewPrice(user.getSymbol()) - user.getOldPrice()) / user.getOldPrice() * 100;
-            if (Math.abs(percent) >= 0) {
+            if (Math.abs(percent) >= 1) {
                 log.warn(LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
                         user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
                         user.getOldPrice() + ", new price: " + this.getNewPrice(user.getSymbol()) + ", percent: " + decimalFormat.format(Math.abs(percent)));
