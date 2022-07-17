@@ -2,6 +2,7 @@ package com.example.cryptocurrency.controller;
 
 import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.model.Price;
+import com.example.cryptocurrency.model.User;
 import com.example.cryptocurrency.service.CoinService;
 import com.example.cryptocurrency.service.PriceService;
 import com.example.cryptocurrency.service.UserService;

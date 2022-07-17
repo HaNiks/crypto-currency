@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +19,9 @@ public class UserService {
 
     private final PriceRepo priceRepo;
     private final PriceService priceService;
-    private User user;
     private final List<User> users;
+
+    private User user;
     private final Logger log;
 
     public UserService(PriceRepo priceRepo, PriceService priceService) {
@@ -36,7 +38,6 @@ public class UserService {
         for (Price price : prices) {
             priceService.updatePrice(price.getSymbol());
             if (user != null) {
-                user.setNewPrice(price.getPrice());
                 notifyUser(price.getSymbol());
             }
             System.out.println(price);
@@ -60,13 +61,19 @@ public class UserService {
     }
 
     private void checkLog() {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        double percent;
         for (User user : users) {
-            double percent = (user.getNewPrice() - user.getOldPrice()) / user.getOldPrice() * 100;
+            percent = (this.getNewPrice(user.getSymbol()) - user.getOldPrice()) / user.getOldPrice() * 100;
             if (Math.abs(percent) >= 0) {
                 log.warn(LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
                         user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
-                        user.getOldPrice() + ", new price: " + user.getNewPrice() + ", percent: " + percent);
+                        user.getOldPrice() + ", new price: " + this.getNewPrice(user.getSymbol()) + ", percent: " + decimalFormat.format(Math.abs(percent)));
             }
         }
+    }
+
+    private double getNewPrice(String symbol) {
+        return priceRepo.getPriceBySymbol(symbol).getPrice();
     }
 }
