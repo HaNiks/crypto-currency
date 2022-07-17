@@ -19,7 +19,7 @@ public class Price {
     private String symbol;
 
     @JsonProperty("price_usd")
-    @Column(name = "price", nullable = false, insertable = true, updatable = true)
+    @Column(name = "price")
     private double price;
 
     public Price() {

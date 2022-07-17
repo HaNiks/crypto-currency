@@ -3,6 +3,7 @@ package com.example.cryptocurrency.service;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
 import com.example.cryptocurrency.repository.PriceRepo;
+import com.example.cryptocurrency.util.CoinNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -53,7 +54,8 @@ public class UserService {
     }
 
     public void notifyUser(String symbol) {
-        if (user.getUserName() != null && priceRepo.getPriceBySymbol(symbol).getSymbol().equals(user.getSymbol())) {
+        Price price = priceService.findPrice(symbol);
+        if (user.getUserName() != null && price.getSymbol().equals(user.getSymbol())) {
             checkLog();
         }
     }
@@ -62,16 +64,13 @@ public class UserService {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         double percent;
         for (User user : users) {
-            percent = (this.getNewPrice(user.getSymbol()) - user.getOldPrice()) / user.getOldPrice() * 100;
+            percent = (priceService.findPrice(user.getSymbol()).getPrice() - user.getOldPrice()) / user.getOldPrice() * 100;
             if (Math.abs(percent) >= 1) {
                 log.warn(LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
                         user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
-                        user.getOldPrice() + ", new price: " + this.getNewPrice(user.getSymbol()) + ", percent: " + decimalFormat.format(Math.abs(percent)));
+                        user.getOldPrice() + ", new price: " + priceService.findPrice(user.getSymbol()).getPrice() +
+                        ", percent: " + decimalFormat.format(Math.abs(percent)));
             }
         }
-    }
-
-    private double getNewPrice(String symbol) {
-        return priceRepo.getPriceBySymbol(symbol).getPrice();
     }
 }
