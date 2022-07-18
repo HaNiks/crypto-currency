@@ -2,7 +2,7 @@ package com.example.cryptocurrency.service;
 
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.repository.PriceRepo;
-import com.example.cryptocurrency.util.CoinNotFoundException;
+import com.example.cryptocurrency.exception.CoinNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

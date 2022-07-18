@@ -43,13 +43,15 @@ public class UserService {
         }
     }
 
-    public void setUserName(String userName, String symbol) {
+    public User setUserName(String userName, String symbol) {
         user = new User();
         user.setOldPrice(priceService.findPrice(symbol).getPriceUsd());
-        user.setId(priceService.findPrice(symbol).getId());
+        user.setNewPrice(priceService.findPrice(symbol).getPriceUsd());
+        user.setId(users.size() + 1);
         user.setUserName(userName);
         user.setSymbol(symbol);
         users.add(user);
+        return user;
     }
 
     public void notifyUser(String symbol) {
@@ -61,13 +63,14 @@ public class UserService {
 
     private void checkLog() {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        user.setNewPrice(priceService.findPrice(user.getSymbol()).getPriceUsd());
         double percent;
         for (User user : users) {
-            percent = (priceService.findPrice(user.getSymbol()).getPriceUsd() - user.getOldPrice()) / user.getOldPrice() * 100;
+            percent = (user.getNewPrice() - user.getOldPrice()) / user.getOldPrice() * 100;
             if (Math.abs(percent) >= 1) {
                 log.warn(LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
                         user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
-                        user.getOldPrice() + ", new price: " + priceService.findPrice(user.getSymbol()).getPriceUsd() +
+                        user.getOldPrice() + ", new price: " + user.getNewPrice() +
                         ", percent: " + decimalFormat.format(Math.abs(percent)));
             }
         }

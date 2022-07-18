@@ -1,7 +1,5 @@
 package com.example.cryptocurrency.exception;
 
-import com.example.cryptocurrency.util.CoinErrorResponse;
-import com.example.cryptocurrency.util.CoinNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

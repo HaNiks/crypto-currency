@@ -4,6 +4,7 @@ import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.repository.CoinRepo;
 import com.example.cryptocurrency.repository.PriceRepo;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +15,11 @@ public class CryptoCurrencyApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CryptoCurrencyApplication.class, args);
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
     @Bean

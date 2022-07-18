@@ -1,4 +1,4 @@
-package com.example.cryptocurrency.util;
+package com.example.cryptocurrency.exception;
 
 import java.time.LocalDateTime;
 

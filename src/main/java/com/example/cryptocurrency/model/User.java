@@ -1,7 +1,6 @@
 package com.example.cryptocurrency.model;
 
 public class User {
-
     private int id;
 
     private String userName;
