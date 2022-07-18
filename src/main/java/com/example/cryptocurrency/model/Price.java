@@ -20,15 +20,15 @@ public class Price {
 
     @JsonProperty("price_usd")
     @Column(name = "price")
-    private double price;
+    private double priceUsd;
 
     public Price() {
     }
 
-    public Price(int id, String symbol, double price) {
+    public Price(int id, String symbol, double priceUsd) {
         this.id = id;
         this.symbol = symbol;
-        this.price = price;
+        this.priceUsd = priceUsd;
     }
 
     public int getId() {
@@ -47,12 +47,12 @@ public class Price {
         this.symbol = symbol;
     }
 
-    public double getPrice() {
-        return price;
+    public double getPriceUsd() {
+        return priceUsd;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setPriceUsd(double priceUsd) {
+        this.priceUsd = priceUsd;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class Price {
         return "Price{" +
                 "id=" + id +
                 ", symbol='" + symbol + '\'' +
-                ", price=" + price +
+                ", price=" + priceUsd +
                 '}';
     }
 }

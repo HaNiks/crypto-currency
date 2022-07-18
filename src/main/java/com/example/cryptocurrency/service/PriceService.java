@@ -24,7 +24,7 @@ public class PriceService {
 
     public Price updatePrice(String symbol) {
         Price priceObj = this.findPrice(symbol);
-        priceObj.setPrice(this.getNewPrice(symbol));
+        priceObj.setPriceUsd(this.getNewPrice(symbol));
         priceRepo.save(priceObj);
         return findPrice(symbol);
     }
@@ -33,7 +33,7 @@ public class PriceService {
         Price price = findPrice(symbol);
         String url = "https://api.coinlore.net/api/ticker/?id=" + price.getId();
         Price[] prices = restTemplate.getForObject(url, Price[].class);
-        return Objects.requireNonNull(prices)[0].getPrice();
+        return Objects.requireNonNull(prices)[0].getPriceUsd();
     }
 
     public Price findPrice(String symbol) {
