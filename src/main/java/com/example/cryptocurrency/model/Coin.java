@@ -1,18 +1,12 @@
 package com.example.cryptocurrency.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Coin {
 
     @Id
-    @JsonProperty("id")
     private int id;
-
-    @JsonProperty("symbol")
     private String symbol;
 
     public Coin() {

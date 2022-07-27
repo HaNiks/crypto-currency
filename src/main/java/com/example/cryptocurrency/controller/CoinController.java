@@ -49,8 +49,8 @@ public class CoinController {
         return convertToPriceDTO(priceService.updatePrice(symbol));
     }
 
-    @GetMapping("/notify")
-    public List<UserDTO> notify(@ModelAttribute("username") String username, @ModelAttribute("symbol") String symbol) {
+    @PostMapping("/notify")
+    public List<UserDTO> notify(@RequestParam String username, String symbol) {
         return convertToUserDTO(userService.setUserName(username, symbol));
     }
 

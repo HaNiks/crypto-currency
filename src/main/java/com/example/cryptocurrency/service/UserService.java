@@ -3,6 +3,7 @@ package com.example.cryptocurrency.service;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
 import com.example.cryptocurrency.repository.PriceRepo;
+import com.example.cryptocurrency.repository.UserRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -11,24 +12,22 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
 
     private final PriceRepo priceRepo;
+    private final UserRepo userRepo;
     private final PriceService priceService;
-    private final List<User> users;
-
     private User user;
     private final Logger log;
 
-    public UserService(PriceRepo priceRepo, PriceService priceService) {
+    public UserService(PriceRepo priceRepo, UserRepo userRepo, PriceService priceService) {
         this.priceRepo = priceRepo;
+        this.userRepo = userRepo;
         this.priceService = priceService;
         this.log = LoggerFactory.getLogger(User.class);
-        users = new ArrayList<>();
     }
 
     @Scheduled(fixedRate = 60 * 1000)
@@ -45,32 +44,34 @@ public class UserService {
 
     public User setUserName(String userName, String symbol) {
         user = new User();
+        priceService.updatePrice(symbol);
         user.setOldPrice(priceService.findPrice(symbol).getPriceUsd());
-        user.setNewPrice(priceService.findPrice(symbol).getPriceUsd());
-        user.setId(users.size() + 1);
         user.setUserName(userName);
         user.setSymbol(symbol);
-        users.add(user);
+        userRepo.save(user);
         return user;
     }
 
+    @Async
     public void notifyUser(String symbol) {
         Price price = priceService.findPrice(symbol);
-        if (user.getUserName() != null && price.getSymbol().equals(user.getSymbol())) {
+        if (price.getSymbol().equals(user.getSymbol())) {
             checkLog();
         }
     }
 
-    private void checkLog() {
+    @Async
+    public void checkLog() {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        user.setNewPrice(priceService.findPrice(user.getSymbol()).getPriceUsd());
         double percent;
+        List<User> users = userRepo.findAll();
         for (User user : users) {
-            percent = (user.getNewPrice() - user.getOldPrice()) / user.getOldPrice() * 100;
+            double newPrice = priceService.findPrice(user.getSymbol()).getPriceUsd();
+            percent = (newPrice - user.getOldPrice()) / user.getOldPrice() * 100;
             if (Math.abs(percent) >= 1) {
                 log.warn(LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
                         user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
-                        user.getOldPrice() + ", new price: " + user.getNewPrice() +
+                        user.getOldPrice() + ", new price: " + newPrice +
                         ", percent: " + decimalFormat.format(Math.abs(percent)));
             }
         }

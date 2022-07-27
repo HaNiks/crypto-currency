@@ -1,23 +1,29 @@
 package com.example.cryptocurrency.model;
 
+import javax.persistence.*;
+
+@Entity
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "user_name")
     private String userName;
     private String symbol;
 
+    @Column(name = "old_price")
     private double oldPrice;
-    private double newPrice;
 
     public User() {
     }
 
-    public User(int id, String userName, String symbol, double oldPrice, double newPrice) {
+    public User(int id, String userName, String symbol, double oldPrice) {
         this.id = id;
         this.userName = userName;
         this.symbol = symbol;
         this.oldPrice = oldPrice;
-        this.newPrice = newPrice;
     }
 
     public int getId() {
@@ -52,13 +58,6 @@ public class User {
         this.oldPrice = oldPrice;
     }
 
-    public double getNewPrice() {
-        return newPrice;
-    }
-
-    public void setNewPrice(double newPrice) {
-        this.newPrice = newPrice;
-    }
 
     @Override
     public String toString() {

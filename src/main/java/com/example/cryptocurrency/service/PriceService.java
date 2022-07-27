@@ -4,8 +4,10 @@ import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.repository.PriceRepo;
 import com.example.cryptocurrency.exception.CoinNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Objects;
 
@@ -32,7 +34,12 @@ public class PriceService {
     public double getNewPrice(String symbol) {
         Price price = findPrice(symbol);
         String url = "https://api.coinlore.net/api/ticker/?id=" + price.getId();
-        Price[] prices = restTemplate.getForObject(url, Price[].class);
+        WebClient webClient = WebClient.create(url);
+        Price[] prices = webClient.get()
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Price[].class)
+                .block();
         return Objects.requireNonNull(prices)[0].getPriceUsd();
     }
 

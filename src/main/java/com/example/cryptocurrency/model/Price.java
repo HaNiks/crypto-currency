@@ -12,10 +12,8 @@ import javax.persistence.Table;
 public class Price {
 
     @Id
-    @JsonProperty("id")
     private int id;
 
-    @JsonProperty("symbol")
     private String symbol;
 
     @JsonProperty("price_usd")
