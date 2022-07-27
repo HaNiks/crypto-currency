@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 @Entity
 public class Coin {
-
     @Id
     private int id;
     private String symbol;
@@ -31,6 +30,14 @@ public class Coin {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    @Override
+    public String toString() {
+        return "Coin{" +
+                "id=" + id +
+                ", symbol='" + symbol + '\'' +
+                '}';
     }
 }
 

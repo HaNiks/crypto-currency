@@ -7,6 +7,7 @@ import com.example.cryptocurrency.repository.UserRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@EnableScheduling
 public class UserService {
 
     private final PriceRepo priceRepo;
@@ -58,6 +60,14 @@ public class UserService {
         if (price.getSymbol().equals(user.getSymbol())) {
             checkLog();
         }
+    }
+
+    public User getUser(String userName) {
+        return userRepo.findByUserName(userName);
+    }
+
+    public List<User> findAll() {
+        return userRepo.findAll();
     }
 
     @Async

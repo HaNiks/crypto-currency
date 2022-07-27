@@ -6,34 +6,26 @@ import com.example.cryptocurrency.exception.CoinNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Objects;
 
 @Service
-public class PriceService {
-
-    private final RestTemplate restTemplate;
-    private final PriceRepo priceRepo;
-
+public record PriceService(PriceRepo priceRepo) {
 
     @Autowired
-    public PriceService(PriceRepo priceRepo) {
-        this.restTemplate = new RestTemplate();
-        this.priceRepo = priceRepo;
+    public PriceService {
     }
 
     public Price updatePrice(String symbol) {
         Price priceObj = this.findPrice(symbol);
-        priceObj.setPriceUsd(this.getNewPrice(symbol));
+        priceObj.setPriceUsd(this.getNewPrice(priceObj.getId()));
         priceRepo.save(priceObj);
         return findPrice(symbol);
     }
 
-    public double getNewPrice(String symbol) {
-        Price price = findPrice(symbol);
-        String url = "https://api.coinlore.net/api/ticker/?id=" + price.getId();
+    public double getNewPrice(int id) {
+        String url = "https://api.coinlore.net/api/ticker/?id=" + id;
         WebClient webClient = WebClient.create(url);
         Price[] prices = webClient.get()
                 .accept(MediaType.APPLICATION_JSON)
