@@ -86,4 +86,10 @@ public class UserService {
             }
         }
     }
+
+    public User deleteUser(String username) {
+        User deleteUser = userRepo.findByUserName(username);
+        userRepo.delete(deleteUser);
+        return deleteUser;
+    }
 }

@@ -1,9 +1,8 @@
 package com.example.cryptocurrency.dto;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class PriceDTO implements Serializable {
+public class PriceDTO {
     private String symbol;
     private double priceUsd;
 

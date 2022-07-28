@@ -35,6 +35,11 @@ public class CoinController {
         return convertToCoinDTO(coinService.saveNewCoin(id));
     }
 
+    @PostMapping("/delete")
+    public CoinDTO deleteCoin(@RequestParam String symbol) {
+        return convertToCoinDTO(coinService.deleteCoinBySymbol(symbol));
+    }
+
     private CoinDTO convertToCoinDTO(Coin coin) {
         return modelMapper.map(coin, CoinDTO.class);
     }

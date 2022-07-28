@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -37,5 +38,9 @@ public record PriceService(PriceRepo priceRepo) {
 
     public Price findPrice(String symbol) {
         return priceRepo.getPriceBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
+    }
+
+    public List<Price> getAllPrice() {
+        return priceRepo.findAll();
     }
 }

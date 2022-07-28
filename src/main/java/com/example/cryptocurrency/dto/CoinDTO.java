@@ -1,9 +1,8 @@
 package com.example.cryptocurrency.dto;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class CoinDTO implements Serializable {
+public class CoinDTO {
     private int id;
     private String symbol;
 

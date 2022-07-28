@@ -1,9 +1,11 @@
 package com.example.cryptocurrency.service;
 
 import com.example.cryptocurrency.model.Price;
+import com.example.cryptocurrency.model.User;
 import com.example.cryptocurrency.repository.CoinRepo;
 import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.repository.PriceRepo;
+import com.example.cryptocurrency.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public record CoinService(CoinRepo coinRepo, PriceRepo priceRepo, PriceService priceService) {
+public record CoinService(CoinRepo coinRepo, PriceRepo priceRepo,
+                          PriceService priceService, UserRepo userRepo) {
     @Autowired
     public CoinService {
     }
@@ -42,7 +45,16 @@ public record CoinService(CoinRepo coinRepo, PriceRepo priceRepo, PriceService p
                 .bodyToMono(Coin[].class)
                 .block();
         return Objects.requireNonNull(coins)[0];
-
     }
 
+    public Coin deleteCoinBySymbol(String symbol) {
+        Coin coin = coinRepo.findCoinBySymbol(symbol);
+        coinRepo.delete(coin);
+        priceRepo.delete(priceService.findPrice(symbol));
+        User user = userRepo.findBySymbol(symbol);
+        if (user != null) {
+            userRepo.delete(user);
+        }
+        return coin;
+    }
 }
