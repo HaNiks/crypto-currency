@@ -46,8 +46,9 @@ public class UserService {
 
     public User setUserName(String userName, String symbol) {
         user = new User();
+        Price price = priceService.findPrice(symbol);
         priceService.updatePrice(symbol);
-        user.setOldPrice(priceService.findPrice(symbol).getPriceUsd());
+        user.setOldPrice(price.getPriceUsd());
         user.setUserName(userName);
         user.setSymbol(symbol);
         userRepo.save(user);
@@ -62,8 +63,8 @@ public class UserService {
         }
     }
 
-    public User getUser(String userName) {
-        return userRepo.findByUserName(userName);
+    public List<User> getUser(String userName) {
+        return userRepo.findAllByUserName(userName);
     }
 
     public List<User> findAll() {
@@ -87,9 +88,9 @@ public class UserService {
         }
     }
 
-    public User deleteUser(String username) {
-        User deleteUser = userRepo.findByUserName(username);
-        userRepo.delete(deleteUser);
+    public List<User> deleteUser(String username) {
+        List<User> deleteUser = userRepo.findAllByUserName(username);
+        userRepo.deleteAll(deleteUser);
         return deleteUser;
     }
 }

@@ -29,11 +29,13 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    public UserDTO getUser(@PathVariable String username) {
-        return convertToUserDTO(userService.getUser(username));
+    public List<UserDTO> getUser(@PathVariable String username) {
+        return userService.getUser(username).stream()
+                .map(this::convertToUserDTO)
+                .collect(Collectors.toList());
     }
 
-    @GetMapping("")
+    @GetMapping()
     public List<UserDTO> getAllUsers() {
         return userService.findAll()
                 .stream()
@@ -42,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    public User deleteUser(@RequestParam String username) {
+    public List<User> deleteUser(@RequestParam String username) {
         return userService.deleteUser(username);
     }
 

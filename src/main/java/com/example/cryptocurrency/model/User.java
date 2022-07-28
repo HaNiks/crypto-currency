@@ -8,11 +8,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     @Column(name = "user_name")
     private String userName;
     private String symbol;
-
     @Column(name = "old_price")
     private double oldPrice;
 
@@ -57,7 +55,6 @@ public class User {
     public void setOldPrice(double oldPrice) {
         this.oldPrice = oldPrice;
     }
-
 
     @Override
     public String toString() {
