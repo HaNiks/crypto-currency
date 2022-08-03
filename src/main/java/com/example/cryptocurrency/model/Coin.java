@@ -6,13 +6,15 @@ import javax.persistence.*;
 public class Coin {
     @Id
     private int id;
+    private String name;
     private String symbol;
 
     public Coin() {
     }
 
-    public Coin(int id, String symbol) {
+    public Coin(int id, String name, String symbol) {
         this.id = id;
+        this.name = name;
         this.symbol = symbol;
     }
 
@@ -32,10 +34,19 @@ public class Coin {
         this.symbol = symbol;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "Coin{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", symbol='" + symbol + '\'' +
                 '}';
     }

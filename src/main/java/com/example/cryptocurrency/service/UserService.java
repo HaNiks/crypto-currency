@@ -74,17 +74,17 @@ public class UserService {
     @Async
     public void checkLog() {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        double percent;
         List<User> users = userRepo.findAll();
         for (User user : users) {
             double newPrice = priceService.findPrice(user.getSymbol()).getPriceUsd();
-            percent = (newPrice - user.getOldPrice()) / user.getOldPrice() * 100;
+            double percent = (newPrice - user.getOldPrice()) / user.getOldPrice() * 100;
+            String print = LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
+                    user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
+                    user.getOldPrice() + ", new price: " + newPrice +
+                    ", percent: " + decimalFormat.format(Math.abs(percent));
             if (Math.abs(percent) >= 1) {
-                log.warn(LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
-                        user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
-                        user.getOldPrice() + ", new price: " + newPrice +
-                        ", percent: " + decimalFormat.format(Math.abs(percent)));
-            }
+                log.warn(print);
+            } else log.info(print);
         }
     }
 

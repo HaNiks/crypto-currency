@@ -1,5 +1,6 @@
 package com.example.cryptocurrency.service;
 
+import com.example.cryptocurrency.exception.CoinNotFoundException;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
 import com.example.cryptocurrency.repository.CoinRepo;
@@ -48,7 +49,7 @@ public record CoinService(CoinRepo coinRepo, PriceRepo priceRepo,
     }
 
     public Coin deleteCoinBySymbol(String symbol) {
-        Coin coin = coinRepo.findCoinBySymbol(symbol);
+        Coin coin = coinRepo.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
         coinRepo.delete(coin);
         priceRepo.delete(priceService.findPrice(symbol));
         User user = userRepo.findBySymbol(symbol);
@@ -56,5 +57,9 @@ public record CoinService(CoinRepo coinRepo, PriceRepo priceRepo,
             userRepo.delete(user);
         }
         return coin;
+    }
+
+    public Coin findCoinBySymbol(String symbol) {
+        return coinRepo.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
     }
 }

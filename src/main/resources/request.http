@@ -1,0 +1,37 @@
+GET localhost:8085/coin
+Accept: application/json
+
+###
+
+GET localhost:8085/coin/BTC
+Accept: application/json
+
+###
+
+GET localhost:8085/price
+Accept: application/json
+
+###
+
+GET localhost:8085/user
+Accept: application/json
+
+###
+
+GET localhost:8085/user/Nik
+Accept: application/json
+
+###
+
+POST localhost:8085/coin/22
+Content-Type: application/json
+
+###
+
+POST localhost:8085/user/notify?username=Sergey&symbol=SOL
+Content-Type: application/json
+
+###
+
+POST localhost:8085/user/delete?username=Pavel
+Content-Type: application/json

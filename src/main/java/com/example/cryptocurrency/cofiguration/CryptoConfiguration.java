@@ -4,22 +4,13 @@ import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.repository.CoinRepo;
 import com.example.cryptocurrency.repository.PriceRepo;
-import com.example.cryptocurrency.service.PriceService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CryptoConfiguration {
-    private final PriceService priceService;
-
-    @Autowired
-    public CryptoConfiguration(PriceService priceService) {
-        this.priceService = priceService;
-    }
-
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
@@ -30,9 +21,9 @@ public class CryptoConfiguration {
         return args -> {
             if (coinRepo.count() == 0) {
 
-                Coin BTC = new Coin(90, "BTC");
-                Coin ETH = new Coin(80, "ETH");
-                Coin SOL = new Coin(48543, "SOL");
+                Coin BTC = new Coin(90, "Bitcoin","BTC");
+                Coin ETH = new Coin(80, "Ethereum", "ETH");
+                Coin SOL = new Coin(48543, "Solana" ,"SOL");
 
                 coinRepo.save(BTC);
                 coinRepo.save(ETH);
