@@ -28,7 +28,7 @@ Content-Type: application/json
 
 ###
 
-POST localhost:8085/user/notify?username=Sergey&symbol=SOL
+POST localhost:8085/user/notify?username=Nik&symbol=ETH
 Content-Type: application/json
 
 ###

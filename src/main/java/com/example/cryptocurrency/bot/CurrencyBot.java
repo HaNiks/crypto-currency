@@ -32,8 +32,10 @@ public class CurrencyBot extends TelegramLongPollingBot {
 
         String inputText = update.getMessage().getText();
         switch (inputText) {
-            case "/price" -> botService.getAllPriceToBot(output);
+            case "/price" -> botService.getAllCoin(output);
             case "/help" -> botService.getBotHelpInfo(output);
+            case "/addCoin" -> botService.addNewCoin(update, output);
+            case "/users" -> botService.getAllUsers(output);
         }
         sendMessage.setChatId(update.getMessage().getChatId());
         sendMessage.setText(output.toString());
