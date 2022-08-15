@@ -1,9 +1,11 @@
 package com.example.cryptocurrency.service;
 
+import com.example.cryptocurrency.dto.UserDTO;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
-import com.example.cryptocurrency.repository.PriceRepo;
-import com.example.cryptocurrency.repository.UserRepo;
+import com.example.cryptocurrency.repository.PriceRepository;
+import com.example.cryptocurrency.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -19,78 +21,81 @@ import java.util.List;
 @EnableScheduling
 public class UserService {
 
-    private final PriceRepo priceRepo;
-    private final UserRepo userRepo;
+    private final PriceRepository priceRepository;
+    private final UserRepository userRepository;
     private final PriceService priceService;
+    private final ModelMapper modelMapper;
     private User user;
     private final Logger log;
 
-    public UserService(PriceRepo priceRepo, UserRepo userRepo, PriceService priceService) {
-        this.priceRepo = priceRepo;
-        this.userRepo = userRepo;
+    public UserService(PriceRepository priceRepository, UserRepository userRepository, PriceService priceService, ModelMapper modelMapper) {
+        this.priceRepository = priceRepository;
+        this.userRepository = userRepository;
         this.priceService = priceService;
+        this.modelMapper = modelMapper;
         this.log = LoggerFactory.getLogger(User.class);
     }
 
     @Scheduled(fixedRate = 60 * 1000)
     @Async
     public void update() {
-        List<Price> prices = priceRepo.findAll();
+        List<Price> prices = priceRepository.findAll();
         for (Price price : prices) {
             priceService.updatePrice(price.getSymbol());
             if (user != null) {
-                notifyUser(price.getSymbol());
+                checkLog(price);
             }
         }
     }
 
-    public User setUserName(String userName, String symbol) {
+    public User notify(String userName, String symbol) {
         user = new User();
-        Price price = priceService.findPrice(symbol);
+        Price price = priceService.findPriceBySymbol(symbol);
         priceService.updatePrice(symbol);
         user.setOldPrice(price.getPriceUsd());
         user.setUserName(userName);
         user.setSymbol(symbol);
-        userRepo.save(user);
+        userRepository.save(user);
         return user;
     }
 
     @Async
-    public void notifyUser(String symbol) {
-        Price price = priceService.findPrice(symbol);
-        if (price.getSymbol().equals(user.getSymbol())) {
-            checkLog();
-        }
-    }
-
-    public List<User> getUser(String userName) {
-        return userRepo.findAllByUserName(userName);
-    }
-
-    public List<User> findAll() {
-        return userRepo.findAll();
-    }
-
-    @Async
-    public void checkLog() {
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        List<User> users = userRepo.findAll();
+    public void checkLog(Price price) {
+        List<User> users = userRepository.findAll();
         for (User user : users) {
-            double newPrice = priceService.findPrice(user.getSymbol()).getPriceUsd();
+            double newPrice = price.getPriceUsd();
             double percent = (newPrice - user.getOldPrice()) / user.getOldPrice() * 100;
-            String print = LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
-                    user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
-                    user.getOldPrice() + ", new price: " + newPrice +
-                    ", percent: " + decimalFormat.format(Math.abs(percent));
+            String print = getMessage(newPrice, percent);
             if (Math.abs(percent) >= 1) {
                 log.warn(print);
             } else log.info(print);
         }
     }
 
+    @Async
+    public String getMessage(double newPrice, double percent) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        return LocalDateTime.now() + "ID: " + user.getId() + " Name: " +
+                user.getUserName() + ", symbol: " + user.getSymbol() + ", old price: " +
+                user.getOldPrice() + ", new price: " + newPrice +
+                ", percent: " + decimalFormat.format(Math.abs(percent));
+    }
+
     public List<User> deleteUser(String username) {
-        List<User> deleteUser = userRepo.findAllByUserName(username);
-        userRepo.deleteAll(deleteUser);
+        List<User> deleteUser = userRepository.findAllByUserName(username);
+        userRepository.deleteAll(deleteUser);
         return deleteUser;
+    }
+
+    public List<User> getUser(String userName) {
+        return userRepository.findAllByUserName(userName);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public UserDTO convertToUserDTO(User user) {
+        return modelMapper.map(user, UserDTO.class);
     }
 }

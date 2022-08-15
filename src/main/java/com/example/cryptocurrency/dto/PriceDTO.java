@@ -1,9 +1,12 @@
 package com.example.cryptocurrency.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class PriceDTO {
     private String symbol;
+    @JsonProperty("price_usd")
     private double priceUsd;
 
     public PriceDTO(String symbol, double priceUsd) {

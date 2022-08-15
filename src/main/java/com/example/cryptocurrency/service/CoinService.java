@@ -1,29 +1,30 @@
 package com.example.cryptocurrency.service;
 
+import com.example.cryptocurrency.dto.CoinDTO;
 import com.example.cryptocurrency.exception.CoinNotFoundException;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
-import com.example.cryptocurrency.repository.CoinRepo;
+import com.example.cryptocurrency.repository.CoinRepository;
 import com.example.cryptocurrency.model.Coin;
-import com.example.cryptocurrency.repository.PriceRepo;
-import com.example.cryptocurrency.repository.UserRepo;
+import com.example.cryptocurrency.repository.PriceRepository;
+import com.example.cryptocurrency.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
-public record CoinService(CoinRepo coinRepo, PriceRepo priceRepo,
-                          PriceService priceService, UserRepo userRepo) {
+public record CoinService(CoinRepository coinRepository, PriceRepository priceRepository,
+                          PriceService priceService, UserRepository userRepository, ModelMapper modelMapper,
+                          WebClientService webClientService) {
     @Autowired
     public CoinService {
     }
 
     public List<Coin> findAll() {
-        return coinRepo.findAll();
+        return coinRepository.findAll();
     }
 
     public Coin saveNewCoin(int id) {
@@ -32,34 +33,35 @@ public record CoinService(CoinRepo coinRepo, PriceRepo priceRepo,
         price.setId(coin.getId());
         price.setPriceUsd(priceService.getNewPrice(id));
         price.setSymbol(coin.getSymbol());
-        coinRepo.save(coin);
-        priceRepo.save(price);
+        coinRepository.save(coin);
+        priceRepository.save(price);
         return coin;
     }
 
     public Coin getCoinFromAPI(int id) {
         String url = "https://api.coinlore.net/api/ticker/?id=" + id;
-        WebClient webClient = WebClient.create(url);
-        Coin[] coins = webClient.get()
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
+        Coin[] coins = webClientService.getResponseSpec(url)
                 .bodyToMono(Coin[].class)
                 .block();
         return Objects.requireNonNull(coins)[0];
     }
 
-    public Coin deleteCoinBySymbol(String symbol) {
-        Coin coin = coinRepo.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
-        coinRepo.delete(coin);
-        priceRepo.delete(priceService.findPrice(symbol));
-        User user = userRepo.findBySymbol(symbol);
+    public Coin deleteAllCoinInfo(String symbol) {
+        Coin coin = coinRepository.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
+        coinRepository.delete(coin);
+        priceRepository.delete(priceService.findPriceBySymbol(symbol));
+        User user = userRepository.findBySymbol(symbol);
         if (user != null) {
-            userRepo.delete(user);
+            userRepository.delete(user);
         }
         return coin;
     }
 
     public Coin findCoinBySymbol(String symbol) {
-        return coinRepo.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
+        return coinRepository.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
+    }
+
+    public CoinDTO convertToCoinDTO(Coin coin) {
+        return modelMapper.map(coin, CoinDTO.class);
     }
 }

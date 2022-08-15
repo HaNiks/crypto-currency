@@ -1,9 +1,7 @@
 package com.example.cryptocurrency.controller;
 
 import com.example.cryptocurrency.dto.CoinDTO;
-import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.service.CoinService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,32 +13,27 @@ import java.util.stream.Collectors;
 public class CoinController {
 
     private final CoinService coinService;
-    private final ModelMapper modelMapper;
+
 
     @Autowired
-    public CoinController(CoinService coinService, ModelMapper modelMapper) {
+    public CoinController(CoinService coinService) {
         this.coinService = coinService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public List<CoinDTO> getAllCoins() {
+    public List<CoinDTO> findAll() {
         return coinService.findAll().stream()
-                .map(this::convertToCoinDTO)
+                .map(coinService::convertToCoinDTO)
                 .collect(Collectors.toList());
     }
 
     @PostMapping("/add")
-    public CoinDTO addCoin(@RequestParam int id) {
-        return convertToCoinDTO(coinService.saveNewCoin(id));
+    public CoinDTO add(@RequestParam int id) {
+        return coinService.convertToCoinDTO(coinService.saveNewCoin(id));
     }
 
     @PostMapping("/delete")
-    public CoinDTO deleteCoin(@RequestParam String symbol) {
-        return convertToCoinDTO(coinService.deleteCoinBySymbol(symbol));
-    }
-
-    private CoinDTO convertToCoinDTO(Coin coin) {
-        return modelMapper.map(coin, CoinDTO.class);
+    public CoinDTO delete(@RequestParam String symbol) {
+        return coinService.convertToCoinDTO(coinService.deleteAllCoinInfo(symbol));
     }
 }

@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity(name = "Price")
-@Table(name = "price_coin")
+@Entity
 public class Price {
 
     @Id
@@ -16,7 +14,6 @@ public class Price {
 
     private String symbol;
 
-    @JsonProperty("price_usd")
     @Column(name = "price")
     private double priceUsd;
 
