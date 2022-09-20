@@ -1,11 +1,10 @@
 package com.example.cryptocurrency.service;
 
-import com.example.cryptocurrency.dto.CoinDTO;
 import com.example.cryptocurrency.exception.CoinNotFoundException;
+import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
 import com.example.cryptocurrency.repository.CoinRepository;
-import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.repository.PriceRepository;
 import com.example.cryptocurrency.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -46,7 +45,7 @@ public record CoinService(CoinRepository coinRepository, PriceRepository priceRe
         return Objects.requireNonNull(coins)[0];
     }
 
-    public Coin deleteAllCoinInfo(String symbol) {
+    public Coin delete(String symbol) {
         Coin coin = coinRepository.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
         coinRepository.delete(coin);
         priceRepository.delete(priceService.findPriceBySymbol(symbol));
@@ -59,9 +58,5 @@ public record CoinService(CoinRepository coinRepository, PriceRepository priceRe
 
     public Coin findCoinBySymbol(String symbol) {
         return coinRepository.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
-    }
-
-    public CoinDTO convertToCoinDTO(Coin coin) {
-        return modelMapper.map(coin, CoinDTO.class);
     }
 }

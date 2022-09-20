@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findAllByUserName(String username);
+
     User findBySymbol(String symbol);
 }

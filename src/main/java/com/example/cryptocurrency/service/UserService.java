@@ -81,13 +81,13 @@ public class UserService {
                 ", percent: " + decimalFormat.format(Math.abs(percent));
     }
 
-    public List<User> deleteUser(String username) {
+    public List<User> deleteAll(String username) {
         List<User> deleteUser = userRepository.findAllByUserName(username);
         userRepository.deleteAll(deleteUser);
         return deleteUser;
     }
 
-    public List<User> getUser(String userName) {
+    public List<User> findAllByUserName(String userName) {
         return userRepository.findAllByUserName(userName);
     }
 

@@ -1,9 +1,9 @@
 package com.example.cryptocurrency.service;
 
 import com.example.cryptocurrency.dto.PriceDTO;
+import com.example.cryptocurrency.exception.CoinNotFoundException;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.repository.PriceRepository;
-import com.example.cryptocurrency.exception.CoinNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

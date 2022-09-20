@@ -15,7 +15,7 @@ public class HelpCommand implements BotCommand {
                 .append("You can control me by sending these commands: \n \n")
                 .append("Coin command: \n")
                 .append("/price - actual coin price \n")
-                .append("/addCoin - add a new cryptocurrency\n \n")
+                .append("/add - add a new cryptocurrency\n \n")
                 .append("User command \n")
                 .append("/users - shows all registered users");
     }
