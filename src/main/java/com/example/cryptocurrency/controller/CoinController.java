@@ -6,8 +6,8 @@ import com.example.cryptocurrency.service.CoinService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,16 +15,11 @@ import java.util.List;
 @Tag(name = "Coin", description = "Operations intended for coins")
 @RestController
 @RequestMapping("/coin")
+@RequiredArgsConstructor
 public class CoinController {
 
     private final CoinService coinService;
     private final ModelMapper modelMapper;
-
-    @Autowired
-    public CoinController(CoinService coinService, ModelMapper modelMapper) {
-        this.coinService = coinService;
-        this.modelMapper = modelMapper;
-    }
 
     @Operation(summary = "Get all coins", tags = "Coin",
             description = "Gets all coins")
@@ -36,8 +31,8 @@ public class CoinController {
     }
 
     @Operation(summary = "Add new coin", tags = "Coin",
-            description = "Gets price of the coin by symbol")
-    @Parameter(name = "symbol", description = "Enter symbol", example = "ETH")
+            description = "Add new coin by id")
+    @Parameter(name = "id", description = "Enter id", example = "10")
     @PostMapping("/add")
     public CoinDTO add(@RequestParam int id) {
         return convertToCoinDTO(coinService.saveNewCoin(id));

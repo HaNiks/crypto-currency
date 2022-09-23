@@ -6,8 +6,8 @@ import com.example.cryptocurrency.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,16 +15,11 @@ import java.util.List;
 @RestController
 @Tag(name = "User", description = "Operations intended for the user")
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final ModelMapper modelMapper;
-
-    @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper) {
-        this.userService = userService;
-        this.modelMapper = modelMapper;
-    }
 
     @Operation(summary = "Registers a new user", tags = "User",
             description = "The user enters his nickname and the symbol of the desired coin.")

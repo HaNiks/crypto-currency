@@ -1,55 +1,41 @@
 package com.example.cryptocurrency.service;
 
-import com.example.cryptocurrency.dto.PriceDTO;
-import com.example.cryptocurrency.exception.CoinNotFoundException;
 import com.example.cryptocurrency.model.Price;
-import com.example.cryptocurrency.repository.PriceRepository;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.cryptocurrency.repository.PriceRepo;
+import com.example.cryptocurrency.exception.CoinNotFoundException;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
-public class PriceService {
-    private final PriceRepository priceRepository;
-    private final ModelMapper modelMapper;
-    private final WebClientService webClientService;
-    @Value("${url}")
-    private String url;
-
-    @Autowired
-    public PriceService(PriceRepository priceRepository, ModelMapper modelMapper, WebClientService webClientService) {
-        this.priceRepository = priceRepository;
-        this.modelMapper = modelMapper;
-        this.webClientService = webClientService;
-    }
+public record PriceService(PriceRepo priceRepo) {
 
     public Price updatePrice(String symbol) {
-        Price priceObj = this.findPriceBySymbol(symbol);
+        Price priceObj = this.findPrice(symbol);
         priceObj.setPriceUsd(this.getNewPrice(priceObj.getId()));
-        return priceRepository.save(priceObj);
+        priceRepo.save(priceObj);
+        return findPrice(symbol);
     }
 
     public double getNewPrice(int id) {
-        url += id;
-        Price[] prices = webClientService.getResponseSpec(url)
+        String url = "https://api.coinlore.net/api/ticker/?id=" + id;
+        WebClient webClient = WebClient.create(url);
+        Price[] prices = webClient.get()
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
                 .bodyToMono(Price[].class)
                 .block();
         return Objects.requireNonNull(prices)[0].getPriceUsd();
     }
 
-    public Price findPriceBySymbol(String symbol) {
-        return priceRepository.findPriceBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
+    public Price findPrice(String symbol) {
+        return priceRepo.getPriceBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
     }
 
     public List<Price> findAll() {
-        return priceRepository.findAll();
-    }
-
-    public PriceDTO convertToPriceDTO(Price price) {
-        return modelMapper.map(price, PriceDTO.class);
+        return priceRepo.findAll();
     }
 }
