@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "Price coin", description = "Operations intended for price coins")
+@Tag(name = "Price", description = "Operations intended for price coins")
 @RestController
 public class PriceController {
 
@@ -27,7 +27,7 @@ public class PriceController {
         this.modelMapper = modelMapper;
     }
 
-    @Operation(summary = "Get coin pryce", tags = "Price",
+    @Operation(summary = "Get coin pryce by symbol ", tags = "Price",
             description = "Gets price of the coin by symbol")
     @Parameter(name = "symbol", description = "Enter symbol", example = "ETH")
     @GetMapping("/coin/{symbol}")
