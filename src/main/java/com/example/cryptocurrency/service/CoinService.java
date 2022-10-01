@@ -3,11 +3,10 @@ package com.example.cryptocurrency.service;
 import com.example.cryptocurrency.exception.CoinNotFoundException;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
-import com.example.cryptocurrency.repository.CoinRepo;
 import com.example.cryptocurrency.model.Coin;
-import com.example.cryptocurrency.repository.PriceRepo;
-import com.example.cryptocurrency.repository.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.cryptocurrency.repository.CoinRepository;
+import com.example.cryptocurrency.repository.PriceRepository;
+import com.example.cryptocurrency.repository.UserRepository;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,11 +15,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public record CoinService(CoinRepo coinRepo, PriceRepo priceRepo,
-                          PriceService priceService, UserRepo userRepo) {
-    @Autowired
-    public CoinService {
-    }
+public record CoinService(CoinRepository coinRepo, PriceRepository priceRepo,
+                          PriceService priceService, UserRepository userRepo) {
 
     public List<Coin> findAll() {
         return coinRepo.findAll();

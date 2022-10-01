@@ -3,20 +3,15 @@ package com.example.cryptocurrency.service;
 import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
-import com.example.cryptocurrency.repository.bot.BotHelpImpl;
-import com.example.cryptocurrency.repository.bot.BotCoinImpl;
-import com.example.cryptocurrency.repository.bot.BotUserImpl;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
-import java.util.Random;
 
 @Service
 public record BotService(CoinService coinService, UserService userService,
-                         PriceService priceService) implements BotCoinImpl, BotHelpImpl, BotUserImpl {
+                         PriceService priceService) {
 
-    @Override
     public void getAllCoin(StringBuilder output) {
         output.append("The actual price of the CRYPTOCURRENCY:\n \n");
         priceService.findAll()
@@ -30,7 +25,6 @@ public record BotService(CoinService coinService, UserService userService,
         output.append("\n Get help: /help");
     }
 
-    @Override
     public void getBotHelpInfo(StringBuilder output) {
         output.append("I can help with tracking cryptocurrency prices. \n \n")
                 .append("You can control me by sending these commands: \n \n")
@@ -41,7 +35,6 @@ public record BotService(CoinService coinService, UserService userService,
                 .append("/users - shows all registered users");
     }
 
-    @Override
     public void addNewCoin(Update update, StringBuilder output) {
         int id = (int) (Math.random() * 100);
         Coin coin = coinService.saveNewCoin(id);
@@ -53,7 +46,6 @@ public record BotService(CoinService coinService, UserService userService,
                 .append("$ \n");
     }
 
-    @Override
     public void getAllUsers(StringBuilder output) {
         List<User> users = userService.findAll();
         if (users.isEmpty()) {

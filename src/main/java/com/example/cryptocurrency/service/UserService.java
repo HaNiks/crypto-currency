@@ -2,8 +2,8 @@ package com.example.cryptocurrency.service;
 
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
-import com.example.cryptocurrency.repository.PriceRepo;
-import com.example.cryptocurrency.repository.UserRepo;
+import com.example.cryptocurrency.repository.PriceRepository;
+import com.example.cryptocurrency.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -19,13 +19,13 @@ import java.util.List;
 @EnableScheduling
 public class UserService {
 
-    private final PriceRepo priceRepo;
-    private final UserRepo userRepo;
+    private final PriceRepository priceRepo;
+    private final UserRepository userRepo;
     private final PriceService priceService;
     private User user;
     private final Logger log;
 
-    public UserService(PriceRepo priceRepo, UserRepo userRepo, PriceService priceService) {
+    public UserService(PriceRepository priceRepo, UserRepository userRepo, PriceService priceService) {
         this.priceRepo = priceRepo;
         this.userRepo = userRepo;
         this.priceService = priceService;

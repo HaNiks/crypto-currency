@@ -1,17 +1,26 @@
 package com.example.cryptocurrency.service;
 
 import com.example.cryptocurrency.model.Price;
-import com.example.cryptocurrency.repository.PriceRepo;
 import com.example.cryptocurrency.exception.CoinNotFoundException;
-import org.springframework.http.MediaType;
+import com.example.cryptocurrency.repository.PriceRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
-public record PriceService(PriceRepo priceRepo) {
+@RequiredArgsConstructor
+public class PriceService {
+
+    @Value("${url}")
+    private String url;
+
+    private final PriceRepository priceRepo;
+    private final RestTemplate restTemplate = new RestTemplate();
+
 
     public Price updatePrice(String symbol) {
         Price priceObj = this.findPrice(symbol);
@@ -21,18 +30,12 @@ public record PriceService(PriceRepo priceRepo) {
     }
 
     public double getNewPrice(int id) {
-        String url = "https://api.coinlore.net/api/ticker/?id=" + id;
-        WebClient webClient = WebClient.create(url);
-        Price[] prices = webClient.get()
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Price[].class)
-                .block();
+        Price[] prices = restTemplate.getForObject(url + id, Price[].class);
         return Objects.requireNonNull(prices)[0].getPriceUsd();
     }
 
     public Price findPrice(String symbol) {
-        return priceRepo.getPriceBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
+        return priceRepo.findPriceBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
     }
 
     public List<Price> findAll() {
