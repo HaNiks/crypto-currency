@@ -1,8 +1,8 @@
 package com.example.cryptocurrency.service;
 
+import com.example.cryptocurrency.dto.UserDTO;
 import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.model.Price;
-import com.example.cryptocurrency.model.User;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -47,7 +47,7 @@ public record BotService(CoinService coinService, UserService userService,
     }
 
     public void getAllUsers(StringBuilder output) {
-        List<User> users = userService.findAll();
+        List<UserDTO> users = userService.findAll();
         if (users.isEmpty()) {
             output.append("No registered users");
         } else {

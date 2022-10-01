@@ -1,10 +1,12 @@
 package com.example.cryptocurrency.service;
 
+import com.example.cryptocurrency.dto.UserDTO;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
 import com.example.cryptocurrency.repository.PriceRepository;
 import com.example.cryptocurrency.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -24,6 +26,7 @@ public class UserService {
     private final PriceRepository priceRepo;
     private final UserRepository userRepo;
     private final PriceService priceService;
+    private final ModelMapper modelMapper;
     private User user;
     private final Logger log = LoggerFactory.getLogger(User.class);
 
@@ -39,7 +42,7 @@ public class UserService {
         }
     }
 
-    public User notify(String userName, String symbol) {
+    public UserDTO notify(String userName, String symbol) {
         user = new User();
         Price price = priceService.findPrice(symbol);
         priceService.updatePrice(symbol);
@@ -47,7 +50,7 @@ public class UserService {
         user.setUserName(userName);
         user.setSymbol(symbol);
         userRepo.save(user);
-        return user;
+        return convertToUserDTO(user);
     }
 
     @Async
@@ -58,12 +61,18 @@ public class UserService {
         }
     }
 
-    public List<User> findAllByUserName(String userName) {
-        return userRepo.findAllByUserName(userName);
+    public List<UserDTO> findAllByUserName(String userName) {
+        return userRepo.findAllByUserName(userName)
+                .stream()
+                .map(this::convertToUserDTO)
+                .toList();
     }
 
-    public List<User> findAll() {
-        return userRepo.findAll();
+    public List<UserDTO> findAll() {
+        return userRepo.findAll()
+                .stream()
+                .map(this::convertToUserDTO)
+                .toList();
     }
 
     @Async
@@ -83,9 +92,15 @@ public class UserService {
         }
     }
 
-    public List<User> deleteAll(String username) {
+    public List<UserDTO> deleteAll(String username) {
         List<User> deleteUser = userRepo.findAllByUserName(username);
         userRepo.deleteAll(deleteUser);
-        return deleteUser;
+        return deleteUser.stream()
+                .map(this::convertToUserDTO)
+                .toList();
+    }
+
+    private UserDTO convertToUserDTO(User user) {
+        return modelMapper.map(user, UserDTO.class);
     }
 }

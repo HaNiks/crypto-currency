@@ -1,5 +1,6 @@
 package com.example.cryptocurrency.service;
 
+import com.example.cryptocurrency.dto.CoinDTO;
 import com.example.cryptocurrency.exception.CoinNotFoundException;
 import com.example.cryptocurrency.model.Price;
 import com.example.cryptocurrency.model.User;
@@ -7,6 +8,7 @@ import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.repository.CoinRepository;
 import com.example.cryptocurrency.repository.PriceRepository;
 import com.example.cryptocurrency.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,10 +18,14 @@ import java.util.Objects;
 
 @Service
 public record CoinService(CoinRepository coinRepo, PriceRepository priceRepo,
-                          PriceService priceService, UserRepository userRepo) {
+                          PriceService priceService, UserRepository userRepo,
+                          ModelMapper modelMapper) {
 
-    public List<Coin> findAll() {
-        return coinRepo.findAll();
+    public List<CoinDTO> findAll() {
+        return coinRepo.findAll()
+                .stream()
+                .map(this::convertToCoinDTO)
+                .toList();
     }
 
     public Coin saveNewCoin(int id) {
@@ -33,6 +39,10 @@ public record CoinService(CoinRepository coinRepo, PriceRepository priceRepo,
         return coin;
     }
 
+    public CoinDTO save(int id) {
+        return convertToCoinDTO(saveNewCoin(id));
+    }
+
     public Coin getCoinFromAPI(int id) {
         String url = "https://api.coinlore.net/api/ticker/?id=" + id;
         WebClient webClient = WebClient.create(url);
@@ -44,7 +54,7 @@ public record CoinService(CoinRepository coinRepo, PriceRepository priceRepo,
         return Objects.requireNonNull(coins)[0];
     }
 
-    public Coin delete(String symbol) {
+    public CoinDTO delete(String symbol) {
         Coin coin = coinRepo.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
         coinRepo.delete(coin);
         priceRepo.delete(priceService.findPrice(symbol));
@@ -52,10 +62,14 @@ public record CoinService(CoinRepository coinRepo, PriceRepository priceRepo,
         if (user != null) {
             userRepo.delete(user);
         }
-        return coin;
+        return convertToCoinDTO(coin);
     }
 
     public Coin findCoinBySymbol(String symbol) {
         return coinRepo.findCoinBySymbol(symbol).orElseThrow(CoinNotFoundException::new);
+    }
+
+    private CoinDTO convertToCoinDTO(Coin coin) {
+        return modelMapper.map(coin, CoinDTO.class);
     }
 }

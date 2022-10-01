@@ -1,13 +1,11 @@
 package com.example.cryptocurrency.controller;
 
 import com.example.cryptocurrency.dto.CoinDTO;
-import com.example.cryptocurrency.model.Coin;
 import com.example.cryptocurrency.service.CoinService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,23 +17,20 @@ import java.util.List;
 public class CoinController {
 
     private final CoinService coinService;
-    private final ModelMapper modelMapper;
 
     @Operation(summary = "Get all coins", tags = "Coin",
             description = "Gets all coins")
     @GetMapping
     public List<CoinDTO> findAll() {
-        return coinService.findAll().stream()
-                .map(this::convertToCoinDTO)
-                .toList();
+        return coinService.findAll();
     }
 
     @Operation(summary = "Add new coin", tags = "Coin",
             description = "Add new coin by id")
-    @Parameter(name = "id", description = "Enter id", example = "10")
+    @Parameter(name = "id", description = "Enter id", example = "80")
     @PostMapping("/add")
     public CoinDTO add(@RequestParam int id) {
-        return convertToCoinDTO(coinService.saveNewCoin(id));
+        return coinService.save(id);
     }
 
 
@@ -44,11 +39,7 @@ public class CoinController {
     @Parameter(name = "symbol", description = "Enter symbol", example = "ETH")
     @DeleteMapping("/delete")
     public CoinDTO delete(@RequestParam String symbol) {
-        return convertToCoinDTO(coinService.delete(symbol));
-    }
-
-    private CoinDTO convertToCoinDTO(Coin coin) {
-        return modelMapper.map(coin, CoinDTO.class);
+        return coinService.delete(symbol);
     }
 
 }
