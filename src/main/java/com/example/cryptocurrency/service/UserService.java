@@ -75,6 +75,20 @@ public class UserService {
                 .toList();
     }
 
+    public void printAllUsers(StringBuilder output) {
+        List<UserDTO> users = this.findAll();
+        if (users.isEmpty()) {
+            output.append("No registered users");
+        } else {
+            output.append("All users:\n");
+            users.forEach(u -> output.append(u.getUserName())
+                    .append(" - symbol of the saved cryptocurrency: ").append(u.getSymbol())
+                    .append(", start price: ").append(u.getOldPrice())
+                    .append("$ \n"));
+        }
+        output.append("\nGet help: /help");
+    }
+
     @Async
     public void checkLog() {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");

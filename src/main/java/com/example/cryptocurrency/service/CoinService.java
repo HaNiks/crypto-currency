@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +38,30 @@ public record CoinService(CoinRepository coinRepo, PriceRepository priceRepo,
         coinRepo.save(coin);
         priceRepo.save(price);
         return coin;
+    }
+
+    public void addCoin(Update update, StringBuilder output) {
+        int id = (int) (Math.random() * 100);
+        Coin coin = this.saveNewCoin(id);
+        Price price = priceService.findPrice(coin.getSymbol());
+        output.append("A new cryptocurrency has been added: \n")
+                .append(coin.getName())
+                .append(" (").append(price.getSymbol())
+                .append("), price: ").append(price.getPriceUsd())
+                .append("$ \n");
+    }
+
+    public void printAllCoin(StringBuilder output) {
+        output.append("The actual price of the CRYPTOCURRENCY:\n \n");
+        priceService.findAll()
+                .forEach(price -> {
+                    String name = this.findCoinBySymbol(price.getSymbol()).getName();
+                    output.append(name)
+                            .append(" (").append(price.getSymbol())
+                            .append("), price: ").append(price.getPriceUsd())
+                            .append("$ \n");
+                });
+        output.append("\n Get help: /help");
     }
 
     public CoinDTO save(int id) {

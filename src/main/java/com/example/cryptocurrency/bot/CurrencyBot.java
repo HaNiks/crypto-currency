@@ -1,6 +1,9 @@
 package com.example.cryptocurrency.bot;
 
 import com.example.cryptocurrency.service.BotService;
+import com.example.cryptocurrency.service.CoinService;
+import com.example.cryptocurrency.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -10,19 +13,18 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
 @Component
+@RequiredArgsConstructor
 public class CurrencyBot extends TelegramLongPollingBot {
 
     private final BotService botService;
+    private final CoinService coinService;
+    private final UserService userService;
 
     @Value("${bot.name}")
     private String botUsername;
 
     @Value("${bot.token}")
     private String botToken;
-
-    public CurrencyBot(BotService botService) {
-        this.botService = botService;
-    }
 
 
     @Override
@@ -32,10 +34,11 @@ public class CurrencyBot extends TelegramLongPollingBot {
 
         String inputText = update.getMessage().getText();
         switch (inputText) {
-            case "/price" -> botService.getAllCoin(output);
-            case "/help" -> botService.getBotHelpInfo(output);
-            case "/addCoin" -> botService.addNewCoin(update, output);
-            case "/users" -> botService.getAllUsers(output);
+            case "/price" -> coinService.printAllCoin(output);
+            case "/help" -> botService.printBotHelpInfo(output);
+            case "/addCoin" -> coinService.addCoin(update, output);
+            case "/users" -> userService.printAllUsers(output);
+            default -> output.append("Command not found \nGet help: /help");
         }
         sendMessage.setChatId(update.getMessage().getChatId());
         sendMessage.setText(output.toString());
