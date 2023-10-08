@@ -1,11 +1,15 @@
 package com.example.cryptocurrency.controller;
 
 import com.example.cryptocurrency.dto.CoinDTO;
+import com.example.cryptocurrency.model.Security;
+import com.example.cryptocurrency.security.SecurityDetails;
 import com.example.cryptocurrency.service.CoinService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +26,10 @@ public class CoinController {
             description = "Gets all coins")
     @GetMapping
     public List<CoinDTO> findAll() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityDetails securityDetails = (SecurityDetails) authentication.getPrincipal();
+        Security security = securityDetails.getSecurity();
+        System.out.println(security);
         return coinService.findAll();
     }
 
