@@ -38,7 +38,7 @@ public class CurrencyBot extends TelegramLongPollingBot {
             case "/help" -> botService.printBotHelpInfo(output);
             case "/addCoin" -> coinService.addCoin(update, output);
             case "/users" -> userService.printAllUsers(output);
-            default -> output.append("Command not found \nGet help: /help");
+            default -> output.append("Command not ssfound \nGet help: /help");
         }
         sendMessage.setChatId(update.getMessage().getChatId());
         sendMessage.setText(output.toString());
